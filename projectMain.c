@@ -19,7 +19,14 @@
 uint16_t mainNoteLengths[10];
 uint16_t mainNotePeriods[10];
 
+uint16_t string1note;
+uint16_t string2note;
+uint16_t string3note;
+
 char lcdMessage[200];
+
+char lcdSetting; // 1 = showing string values, 2 = showing saved songs, 3 = welcome message
+uint16_t lcdTime;
 
 #define  Frequency10Hz 3200  // 50ms*32/ms = 1600
 
@@ -29,28 +36,58 @@ void sendLCDMessage(char *message) {
 
     int i = 0;
     while (message[i] != 0) {
-      printChar(message[i]);
-      i++;
+        if (message[i] == '/') {
+            setLineNumber(0x40);
+        } else {
+            printChar(message[i]);
+        }
+
+        i++;
     }
 }
 
 void configureSwitches(void) {
     //configure control switches
-    P1->SEL0 &= BIT5;
-    P1->SEL1 &= BIT5;
-    P1->OUT |= BIT5;
-    P1->REN |= BIT5;
+    P1->SEL0 &= BIT5+BIT6+BIT7;
+    P1->SEL1 &= BIT5+BIT6+BIT7;
+    P1->OUT |= BIT5+BIT6+BIT7;
+    P1->REN |= BIT5+BIT6+BIT7;
 
 
 }
 
-bool switchPressed(void) {
+bool playSwitchPressed(void) {
     char switchStatus = (P1->IN >> 5) & 1;
-
     if (switchStatus == 1) {
         //button is not pressed
         return false;
     } else {
+        //button is pressed
+        return true;
+    }
+}
+
+bool stopSwitchPressed(void)
+{
+    char switchStatus = (P1->IN >> 6) & 1;
+    if (switchStatus == 1) {
+        //button is not pressed
+        return false;
+    }
+    else {
+        //button is pressed
+        return true;
+    }
+}
+
+bool saveSwitchPressed(void)
+{
+    char switchStatus = (P1->IN >> 7) & 1;
+    if (switchStatus == 1) {
+        //button is not pressed
+        return false;
+    }
+    else {
         //button is pressed
         return true;
     }
@@ -72,6 +109,27 @@ void ConfigureTimerA0CCROInterrupt(void) {
      __enable_irq();
 }
 
+void mainLCD() {
+    //display welcome message
+    if(lcdSetting == '3') {
+        //increase the timer value
+        lcdTime++;
+
+        if(lcdTime > 50) {
+            //change mode to regular string display
+            lcdSetting = '1';
+        } else {
+            sprintf(lcdMessage, "Welcome!/Play Some Music!");
+            sendLCDMessage(lcdMessage);
+        }
+    }
+
+    //standard display showing note values
+    if(lcdSetting == '1') {
+        sprintf(lcdMessage, "1  2  3/A  B  C");
+        sendLCDMessage(lcdMessage);
+    }
+}
 
 /**
  * main.c
@@ -92,8 +150,9 @@ void main(void)
 	configHFXT();
 	configLFXT();
 
-	sprintf(lcdMessage, "Hi there 1");
-	sendLCDMessage(lcdMessage);
+
+	lcdTime = 0;
+	lcdSetting = '3'; // start LCD in welcome mode
 
 	configureSpeaker();
 
@@ -119,7 +178,7 @@ void main(void)
 	 * MAIN LOOP
 	 */
 	while(1) {
-	    while(switchPressed()) {}
+	    while(playSwitchPressed()) {}
 	}
 
 }
@@ -131,12 +190,25 @@ void TA2_0_IRQHandler(void)
         TIMER_A2->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG;  //clear interrupt flag
         enableConversion();
 
+        //get current values of the string potentiometers
         while((ADC14->IFGR0 & ADC14_IFGR0_IFG1)==0) {};
         uint16_t string1 = ADC14->MEM[1];
         uint16_t string2 = ADC14->MEM[2]; //get string values
         uint16_t string3 = ADC14->MEM[3];
 
+        //determine if any control buttons are pressed
+        if(playSwitchPressed()) {
 
+        }
+        if(stopSwitchPressed()) {
+
+        }
+        if(saveSwitchPressed()) {
+
+        }
+
+        //run main function to update LCD
+        mainLCD();
 
         //printf("\n\r value: %d", POTvalue);
     }
