@@ -18,13 +18,13 @@ static volatile uint16_t curADCResult;
 
 void initConversion(void)
 {
-    POT_PORT->DIR &= ~POT_BIT;
-    POT_PORT->SEL0 |= POT_BIT;
-    POT_PORT->SEL1 |= POT_BIT;
+    POT_PORT1->DIR &= ~(POT1_BIT+POT2_BIT);
+    POT_PORT1->SEL0 |= (POT1_BIT+POT2_BIT);
+    POT_PORT1->SEL1 |= (POT1_BIT+POT2_BIT);
 
-    PHOTO_PORT->DIR &= ~PHOTO_BIT;
-    PHOTO_PORT->SEL0 |= PHOTO_BIT;
-    PHOTO_PORT->SEL1 |= PHOTO_BIT;
+    POT_PORT1->DIR &= ~(POT3_BIT);
+    POT_PORT1->SEL0 |= (POT3_BIT);
+    POT_PORT1->SEL1 |= (POT3_BIT);
 
     /* Configure ADC (CTL0 and CTL1) registers for:
      *      clock source - default MODCLK, clock prescale 1:1,
@@ -52,9 +52,10 @@ void initConversion(void)
     // TODO Configure ADC14MCTL1 as storage register for result
     //          Single-ended mode with Vref+ = Vcc and Vref- = Vss,
     //          Input channel - A15, and comparator window disabled
-    //P5.4
-    ADC14->MCTL[1] = MEMORYCHANNEL;
-    ADC14->MCTL[2] = 0x000E;    //channel bits 4-0 = 0b10000 for A14, P6.1
+
+    ADC14->MCTL[1] = 0x0001; //5.4
+    ADC14->MCTL[2] = 0x0000; //5.5
+    ADC14->MCTL[3] = 0X000E; //6.1
 
     ADC14->MCTL[2] |= 0b10000000;   //turn on End of Sequence bit
 
@@ -87,7 +88,5 @@ void ADC14_IRQHandler(void) {
 
         resultReady = true;
         // not necessary to clear flag because reading ADC14MEMx clears flag
-
-        printf("\r\nADC value = %d", curADCResult);
     }
 }

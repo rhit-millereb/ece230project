@@ -25,6 +25,7 @@ projectMain.obj: C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/
 projectMain.obj: C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/math.h
 projectMain.obj: C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_defs.h
 projectMain.obj: C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_limits.h
+projectMain.obj: C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h
 projectMain.obj: ../csHFXT.h
 projectMain.obj: ../csLFXT.h
 projectMain.obj: ../lcd.h
@@ -81,6 +82,8 @@ C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/math.h:
 C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/_defs.h:
 
 C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/machine/_limits.h:
+
+C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h:
 
 ../csHFXT.h:
 

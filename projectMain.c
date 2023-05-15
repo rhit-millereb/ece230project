@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#include <stdbool.h>
 
 #include "csHFXT.h"
 #include "csLFXT.h"
@@ -20,6 +21,8 @@ uint16_t mainNotePeriods[10];
 
 char lcdMessage[200];
 
+#define  Frequency10Hz 3200  // 50ms*32/ms = 1600
+
 void sendLCDMessage(char *message) {
     clearDisplay();
     setLineNumber(0x00);
@@ -31,9 +34,42 @@ void sendLCDMessage(char *message) {
     }
 }
 
+void configureSwitches(void) {
+    //configure control switches
+    P1->SEL0 &= BIT5;
+    P1->SEL1 &= BIT5;
+    P1->OUT |= BIT5;
+    P1->REN |= BIT5;
 
-void playMusic() {
 
+}
+
+bool switchPressed(void) {
+    char switchStatus = (P1->IN >> 5) & 1;
+
+    if (switchStatus == 1) {
+        //button is not pressed
+        return false;
+    } else {
+        //button is pressed
+        return true;
+    }
+}
+
+void ConfigureTimerA0CCROInterrupt(void) {
+
+    /* Configure Timer_A1 and CCRs */
+     // Set initial period in CCR0 register. This assumes timer starts at 0
+     TIMER_A2->CCR[0] = Frequency10Hz;
+     // Configure CCR0 for Compare mode with interrupt enabled (no output mode - 0)
+     TIMER_A2->CCTL[0]=0x0010;   //0b0000 0000 0001 CCIE=1 0000
+     // Configure Timer_A1 in UP Mode with source ACLK prescale 1:1 and no interrupt
+     TIMER_A2->CTL=0x0112;  //0b0000 0001 ACLK 0001 UP 0100
+
+     /* Configure global interrupts and NVIC */
+     NVIC->ISER[0] |= (1)<<TA2_0_IRQn;
+
+     __enable_irq();
 }
 
 
@@ -56,16 +92,52 @@ void main(void)
 	configHFXT();
 	configLFXT();
 
-	sprintf(lcdMessage, "Hi there hello");
+	sprintf(lcdMessage, "Hi there 1");
 	sendLCDMessage(lcdMessage);
 
 	configureSpeaker();
+
+	ConfigureTimerA0CCROInterrupt();
+
+	initConversion();
+
+	configureSwitches();
+
+	mainNoteLengths[0] = 35000;
+	mainNotePeriods[0] = 50000;
+
+	mainNoteLengths[1] = 5000;
+	mainNotePeriods[1] = 40000;
+
+	mainNoteLengths[2] = 5000;
+	mainNotePeriods[2] = 30000;
+
+	setMusic(mainNotePeriods, mainNoteLengths, 3);
+	play();
 
 	/*
 	 * MAIN LOOP
 	 */
 	while(1) {
-	    play();
+	    while(switchPressed()) {}
 	}
 
+}
+
+void TA2_0_IRQHandler(void)
+{
+    if (TIMER_A2->CCTL[0] & TIMER_A_CCTLN_CCIFG)
+    {
+        TIMER_A2->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG;  //clear interrupt flag
+        enableConversion();
+
+        while((ADC14->IFGR0 & ADC14_IFGR0_IFG1)==0) {};
+        uint16_t string1 = ADC14->MEM[1];
+        uint16_t string2 = ADC14->MEM[2]; //get string values
+        uint16_t string3 = ADC14->MEM[3];
+
+
+
+        //printf("\n\r value: %d", POTvalue);
+    }
 }

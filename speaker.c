@@ -9,20 +9,12 @@
 #include "speaker.h"
 
 uint16_t currentNote = 0;
-
-void setMusic(uint16_t periods[], uint16_t lengths[], uint16_t count) {
-    int i = 0;
-    for (i = 0; i < count; i++)
-    {
-        notePeriods[i] = periods[i];
-        noteLengths[i] = lengths[i];
-    }
-}
+uint16_t totalNotes = 0;
 
 void play(void) {
     //set timer to up mode
     TIMER_A0->CTL |= 0b010000;
-    TIMER_A1->CTL |= 0b010000;
+    TIMER_A1->CTL |= 0b100000;
 
 
 }
@@ -30,7 +22,7 @@ void play(void) {
 void stop(void) {
     //set timer to stop mode
     TIMER_A0->CTL &= ~0b010000;
-    TIMER_A1->CTL &= ~0b010000;
+    TIMER_A1->CTL &= ~0b110000;
 
     currentNote = 0;
 }
@@ -85,6 +77,19 @@ void configureSpeaker(void)
 }
 
 
+void setMusic(uint16_t periods[], uint16_t lengths[], uint16_t count) {
+    totalNotes = count;
+    int i = 0;
+    for (i = 0; i < count; i++)
+    {
+        notePeriods[i] = periods[i];
+        noteLengths[i] = lengths[i];
+    }
+
+    configureSoundTimer();
+    configureIntervalTimer();
+}
+
 void TA1_N_IRQHandler(void)
 {
 
@@ -101,10 +106,16 @@ void TA1_N_IRQHandler(void)
         // Clear CCR2 compare interrupt flag
         TIMER_A1->CCTL[2] = 0x0010;
 
-        //determine the next delay until next note
-        TIMER_A1->CCR[2] += 9999;
+        currentNote++;
 
-        uint16_t nextNote = notePeriods[0];
+        if(currentNote>totalNotes) {
+            stop();
+        }
+
+        //determine the next delay until next note
+        TIMER_A1->CCR[2] += noteLengths[currentNote];
+
+        uint16_t nextNote = notePeriods[currentNote];
         //set the next note
         TIMER_A0->CCR[0] = nextNote - 1;
         // Set high pulse-width in CCR1 register (determines duty cycle)

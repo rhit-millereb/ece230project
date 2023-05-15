@@ -33,4 +33,6 @@ extern void play(void);
 
 extern void stop(void);
 
+extern void setMusic(uint16_t periods[], uint16_t lengths[], uint16_t count);
+
 #endif /* SPEAKER_H_ */

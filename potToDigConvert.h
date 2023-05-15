@@ -9,8 +9,12 @@
 #define POTTODIGCONVERT_H_
 
 
-#define POT_PORT P5
-#define POT_BIT BIT4
+#define POT_PORT1 P5
+#define POT1_BIT BIT4
+#define POT2_BIT BIT5
+#define POT_PORT2 P6
+#define POT3_BIT BIT0
+
 #define PHOTO_PORT P6
 #define PHOTO_BIT BIT1
 #define MEMORYCHANNEL 0x1
