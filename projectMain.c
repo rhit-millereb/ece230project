@@ -18,10 +18,14 @@
 
 uint16_t mainNoteLengths[10];
 uint16_t mainNotePeriods[10];
+uint16_t playNote;
 
-uint16_t string1note;
-uint16_t string2note;
-uint16_t string3note;
+uint16_t string1Note;
+char note1;
+uint16_t string2Note;
+char note2;
+uint16_t string3Note;
+char note3;
 
 char lcdMessage[200];
 
@@ -53,7 +57,11 @@ void configureSwitches(void) {
     P1->OUT |= BIT5+BIT6+BIT7;
     P1->REN |= BIT5+BIT6+BIT7;
 
-
+    //configure string switches
+    P3->SEL0 &= BIT5+BIT6+BIT7;
+    P3->SEL1 &= BIT5+BIT6+BIT7;
+    P3->OUT |= BIT5+BIT6+BIT7;
+    P3->REN |= BIT5+BIT6+BIT7;
 }
 
 bool playSwitchPressed(void) {
@@ -93,6 +101,76 @@ bool saveSwitchPressed(void)
     }
 }
 
+bool stringOnePressed(void) {
+    char switchStatus = (P3->IN >> 5) & 1;
+    if (switchStatus == 1) {
+       //button is not pressed
+       return false;
+    }
+    else {
+       //button is pressed
+       return true;
+    }
+}
+bool stringTwoPressed(void) {
+    char switchStatus = (P3->IN >> 6) & 1;
+    if (switchStatus == 1) {
+       //button is not pressed
+       return false;
+    }
+    else {
+       //button is pressed
+       return true;
+    }
+}
+bool stringThreePressed(void) {
+    char switchStatus = (P3->IN >> 7) & 1;
+    if (switchStatus == 1) {
+       //button is not pressed
+       return false;
+    }
+    else {
+       //button is pressed
+       return true;
+    }
+}
+
+uint16_t setStringOneNote(uint16_t adcValue) {
+    if(adcValue < 1000) {
+        return 0; //first tone
+    } else if (adcValue < 2000) {
+        return 1; //second tone
+    } else if (adcValue < 3000) {
+        return 2; //third tone
+    } else {
+        return 3; //fourth tone
+    }
+}
+
+uint16_t setStringTwoNote(uint16_t adcValue) {
+    if(adcValue < 1000) {
+        return 0; //first tone
+    } else if (adcValue < 2000) {
+        return 1; //second tone
+    } else if (adcValue < 3000) {
+        return 2; //third tone
+    } else {
+        return 3; //fourth tone
+    }
+}
+
+uint16_t setStringThreeNote(uint16_t adcValue) {
+    if(adcValue < 1000) {
+        return 0; //first tone
+    } else if (adcValue < 2000) {
+        return 1; //second tone
+    } else if (adcValue < 3000) {
+        return 2; //third tone
+    } else {
+        return 3; //fourth tone
+    }
+}
+
 void ConfigureTimerA0CCROInterrupt(void) {
 
     /* Configure Timer_A1 and CCRs */
@@ -107,6 +185,26 @@ void ConfigureTimerA0CCROInterrupt(void) {
      NVIC->ISER[0] |= (1)<<TA2_0_IRQn;
 
      __enable_irq();
+}
+
+void setTestNotes(void) {
+    mainNoteLengths[0] = 35000;
+    mainNotePeriods[0] = 50000;
+
+    mainNoteLengths[1] = 5000;
+    mainNotePeriods[1] = 40000;
+
+    mainNoteLengths[2] = 5000;
+    mainNotePeriods[2] = 30000;
+
+    mainNoteLengths[3] = 5000;
+    mainNoteLengths[4] = 5000;
+    mainNoteLengths[5] = 5000;
+    mainNoteLengths[6] = 5000;
+    mainNoteLengths[7] = 5000;
+    mainNoteLengths[8] = 5000;
+    mainNoteLengths[9] = 5000;
+    playNote = 3;
 }
 
 void mainLCD() {
@@ -155,6 +253,14 @@ void main(void)
 	lcdSetting = '3'; // start LCD in welcome mode
 
 	configureSpeaker();
+	playNote = 0;
+	setTestNotes();
+	note1 = 'A';
+	note2 = 'B';
+	note3 = 'C';
+	string1Note = 0;
+	string2Note = 1;
+	string3Note = 2;
 
 	ConfigureTimerA0CCROInterrupt();
 
@@ -162,23 +268,11 @@ void main(void)
 
 	configureSwitches();
 
-	mainNoteLengths[0] = 35000;
-	mainNotePeriods[0] = 50000;
-
-	mainNoteLengths[1] = 5000;
-	mainNotePeriods[1] = 40000;
-
-	mainNoteLengths[2] = 5000;
-	mainNotePeriods[2] = 30000;
-
-	setMusic(mainNotePeriods, mainNoteLengths, 3);
-	play();
-
 	/*
 	 * MAIN LOOP
 	 */
 	while(1) {
-	    while(playSwitchPressed()) {}
+
 	}
 
 }
@@ -198,10 +292,11 @@ void TA2_0_IRQHandler(void)
 
         //determine if any control buttons are pressed
         if(playSwitchPressed()) {
-
+            setMusic(mainNotePeriods, mainNoteLengths, playNote);
+            play();
         }
         if(stopSwitchPressed()) {
-
+            stop();
         }
         if(saveSwitchPressed()) {
 
@@ -210,6 +305,26 @@ void TA2_0_IRQHandler(void)
         //run main function to update LCD
         mainLCD();
 
-        //printf("\n\r value: %d", POTvalue);
+        string1Note = setStringOneNote(string1);
+        string2Note = setStringTwoNote(string2);
+        string3Note = setStringThreeNote(string3);
+
+        //determine if the string buttons are pressed
+        if (stringOnePressed())
+        {
+
+        }
+        if (stringTwoPressed())
+        {
+
+        }
+        if (stringThreePressed())
+        {
+
+        }
+
+        printf("\n\r value1: %d", string1Note);
+        printf(" value2: %d", string2Note);
+        printf(" value3: %d", string3Note);
     }
 }

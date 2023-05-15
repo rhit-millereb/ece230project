@@ -18,13 +18,10 @@ static volatile uint16_t curADCResult;
 
 void initConversion(void)
 {
-    POT_PORT1->DIR &= ~(POT1_BIT+POT2_BIT);
-    POT_PORT1->SEL0 |= (POT1_BIT+POT2_BIT);
-    POT_PORT1->SEL1 |= (POT1_BIT+POT2_BIT);
+    POT_PORT1->DIR &= ~(BIT2+POT1_BIT+POT2_BIT);
+    POT_PORT1->SEL0 |= (BIT2+POT1_BIT+POT2_BIT);
+    POT_PORT1->SEL1 |= (BIT2+POT1_BIT+POT2_BIT);
 
-    POT_PORT1->DIR &= ~(POT3_BIT);
-    POT_PORT1->SEL0 |= (POT3_BIT);
-    POT_PORT1->SEL1 |= (POT3_BIT);
 
     /* Configure ADC (CTL0 and CTL1) registers for:
      *      clock source - default MODCLK, clock prescale 1:1,
@@ -49,15 +46,16 @@ void initConversion(void)
             | (0x1 << ADC14_CTL1_CSTARTADD_OFS) // ADC14MEM1 - conversion start address
             | ADC14_CTL1_PWRMD_2;               // Low-power mode
 
+
     // TODO Configure ADC14MCTL1 as storage register for result
     //          Single-ended mode with Vref+ = Vcc and Vref- = Vss,
     //          Input channel - A15, and comparator window disabled
 
     ADC14->MCTL[1] = 0x0001; //5.4
     ADC14->MCTL[2] = 0x0000; //5.5
-    ADC14->MCTL[3] = 0X000E; //6.1
+    ADC14->MCTL[3] = 0X0003; //5.2
 
-    ADC14->MCTL[2] |= 0b10000000;   //turn on End of Sequence bit
+    ADC14->MCTL[3] |= 0b10000000;   //turn on End of Sequence bit
 
     // DONE Enable ADC conversion complete interrupt for ADC14MEM1
     ADC14->IER0 = 0b0010;
