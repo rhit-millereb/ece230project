@@ -9,7 +9,7 @@
 #include "speaker.h"
 
 // TIMER_A0 used to generate notes
-// TIMER_32_1 used to generate notes, if used instead
+// TIMER32_1 used to generate notes, if used instead
 // TIMER_A1 used to hold notes/rests
 
 uint16_t currentNote = 0;
@@ -18,7 +18,7 @@ uint16_t totalNotes = 0;
 void play(void) {
     //set timer to up mode
 //    TIMER_A0->CTL |= 0b010000;
-    TIMER_32_1->CONTROL |= TIMER32_CONTROL_ENABLE;
+    TIMER32_1->CONTROL |= TIMER32_CONTROL_ENABLE;
     TIMER_A1->CTL |= 0b100000;
 
 
@@ -27,7 +27,7 @@ void play(void) {
 void stop(void) {
     //set timer to stop mode
 //    TIMER_A0->CTL &= ~0b010000;
-    TIMER_32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE;
+    TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE;
     TIMER_A1->CTL &= ~0b110000;
 
     currentNote = 0;
@@ -37,18 +37,18 @@ void configureSoundTimer(void)
 {
     // Set Period in CCR0 register
 //    TIMER_A0->CCR[0] = notePeriods[0] - 1;
-    TIMER_32_1->CONTROL |= TIMER32_CONTROL_MODE; // Periodic Mode
-    TIMER_32_1->LOAD = 4 * (notePeriods[0] / 2) - 1; // Load half the frequency for 50% duty cycle, will lose 1 count per cycle. x4 for prescale.
+    TIMER32_1->CONTROL |= TIMER32_CONTROL_MODE; // Periodic Mode
+    TIMER32_1->LOAD = 4 * (notePeriods[0] / 2) - 1; // Load half the frequency for 50% duty cycle, will lose 1 count per cycle. x4 for prescale.
     // Set high pulse-width in CCR1 register (determines duty cycle)
-    TIMER_32_1->CONTROL &= ~TIMER32_CONTROL_ONESHOT; // Wrapping Mode
+    TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ONESHOT; // Wrapping Mode
 //    TIMER_A0->CCTL[1] |= 0x0060; //set the control for CCR1 (Compare, Set/Reset, No interrupt)
-    TIMER_32_1->CONTROL |= TIMER32_CONTROL_SIZE         // 32-bit
+    TIMER32_1->CONTROL |= TIMER32_CONTROL_SIZE         // 32-bit
                         | TIMER32_CONTROL_PRESCALE_0;   // 0:0 prescale. Technically 4:1, handled by LOAD register.
 //    TIMER_A0->CTL |= 0x0294; //set the TimerA0 control (SMCLK source, Up Mode, 4:1 prescale)
-    TIMER_32_1->CONTROL |= TIMER32_CONTROL_IE; // Interrupt Enabled, for toggling speaker.
+    TIMER32_1->CONTROL |= TIMER32_CONTROL_IE; // Interrupt Enabled, for toggling speaker.
     //set timer to STOP mode
 //    TIMER_A0->CTL &= 0xFFCF;
-    TIMER_32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE;
+    TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE;
 }
 
 void configureIntervalTimer(void)
@@ -100,7 +100,7 @@ void setMusic(uint16_t periods[], uint16_t lengths[], uint16_t count) {
 }
 
 void T32_INT1_IRQHandler(void) {
-    TIMER_32_1->INTCLR = 0; // Clear flag
+    TIMER32_1->INTCLR = 0; // Clear flag
     P2->OUT ^= BIT4; // Toggle the speaker output
 }
 
@@ -132,7 +132,7 @@ void TA1_N_IRQHandler(void)
         uint16_t nextNote = notePeriods[currentNote];
         //set the next note
 //        TIMER_A0->CCR[0] = nextNote - 1;
-        TIMER32_1->LOAD = 4 * (nextNote / 2) - 1
+        TIMER32_1->LOAD = 4 * (nextNote / 2) - 1;
         // Set high pulse-width in CCR1 register (determines duty cycle)
 //        TIMER_A0->CCR[1] = (nextNote / 2) - 1;
 
