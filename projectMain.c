@@ -16,8 +16,12 @@
 #include "servoDriver.h"
 #include "potToDigConvert.h"
 #include "music.h"
+#include "sysTickDelays.h"
 
-
+uint16_t currentSave;
+uint16_t selectedSave;
+uint16_t savedLengths[MAXNOTES][10];
+uint16_t savedPeriods[MAXNOTES][10];
 
 uint16_t mainNoteLengths[MAXNOTES];
 uint16_t mainNotePeriods[MAXNOTES];
@@ -36,6 +40,7 @@ char octave3;
 char lcdMessage[200];
 
 char lcdSetting; // 1 = showing string values, 2 = showing saved songs, 3 = welcome message
+                //4 = popup
 uint16_t lcdTime;
 
 #define  Frequency10Hz 3200  // 50ms*32/ms = 1600
@@ -215,7 +220,7 @@ uint16_t setStringThreeNote(uint16_t adcValue) {
 
 
 uint16_t determineNoteLength(void) {
-
+    return 0;
 }
 
 void ConfigureTimerA0CCROInterrupt(void) {
@@ -234,21 +239,18 @@ void ConfigureTimerA0CCROInterrupt(void) {
      __enable_irq();
 }
 
-void setTestNotes(void) {
-    mainNoteLengths[0] = 35000;
-    mainNoteLengths[1] = 35000;
-    mainNoteLengths[2] = 35000;
-    mainNoteLengths[3] = 35000;
-    mainNoteLengths[4] = 35000;
-    mainNoteLengths[5] = 35000;
-    mainNoteLengths[6] = 35000;
-    mainNoteLengths[7] = 35000;
-    mainNoteLengths[8] = 35000;
-    mainNoteLengths[9] = 35000;
-
-}
 
 void mainLCD() {
+    //determine if there is a popup
+    if(lcdSetting == '4') {
+        lcdTime--;
+
+        //determine if popup is expired and dismiss
+        if(lcdTime == 0) {
+            lcdSetting = '1';
+        }
+    }
+
     //display welcome message
     if(lcdSetting == '3') {
         //increase the timer value
@@ -285,6 +287,9 @@ void main(void)
     configLCD(48000000);
     initLCD();
 
+    //init the delay timer
+    initDelayTimer(48000000);
+
 	//configure timers
 	configHFXT();
 	configLFXT();
@@ -296,12 +301,7 @@ void main(void)
 	configureSpeaker();
 	playNote = 0;
 	//setTestNotes();
-	note1 = 'A';
-	note2 = 'B';
-	note3 = 'C';
-	string1Note = 0;
-	string2Note = 1;
-	string3Note = 2;
+
 
 	ConfigureTimerA0CCROInterrupt();
 
@@ -316,6 +316,99 @@ void main(void)
 
 	}
 
+}
+
+void clearCurrentSong(void) {
+    int i = 0;
+    for (i = 0; i < MAXNOTES; i++)
+    {
+        mainNotePeriods[i] = 0;
+        mainNoteLengths[i] = 0;
+        playNote = 0;
+    }
+}
+
+
+void saveMenu(void) {
+    //stroke already set for menu
+    sprintf(lcdMessage, "Save Song? /Play=Y Stop=N");
+    sendLCDMessage(lcdMessage);
+    bool saveSong = false;
+    while(true) {
+        //hold and wait for input
+        if(playSwitchPressed()) {
+            saveSong = true;
+            break;
+        } else if (stopSwitchPressed()) {
+            while(stopSwitchPressed()) {}//wait for release
+            break;
+        }
+    }
+
+    //save the song to the song array
+    if(saveSong) {
+        //set the song lengths and notes to the current value
+        int i=0;
+        for(i=0; i<MAXNOTES; i++) {
+            savedLengths[currentSave][i] = mainNoteLengths[i];
+            savedPeriods[currentSave][i] = mainNotePeriods[i];
+        }
+
+        //increase current save
+        currentSave++;
+
+        sprintf(lcdMessage, "Song Saved");
+        lcdTime = 50;
+        lcdSetting = '4';
+        sendLCDMessage(lcdMessage);
+        return;
+    }
+
+    sprintf(lcdMessage, "View Saves? /Play=Y Stop=N");
+    sendLCDMessage(lcdMessage);
+    bool viewSaves = false;
+    //ask to view saves
+    while(true) {
+        //wait for input
+        if(playSwitchPressed()) {
+            viewSaves = true;
+            while(playSwitchPressed()) {} //wait for release
+            break;
+        } else if (stopSwitchPressed()) {
+            return;
+        }
+    }
+
+    sprintf(lcdMessage, "Song %d /Play Stop=Exit", selectedSave);
+    sendLCDMessage(lcdMessage);
+    //enter infinite loop to display current song
+    while(viewSaves) {
+        //determine button presses
+        if(playSwitchPressed()) {
+            //send the speaker the current song
+            setMusic(savedPeriods[selectedSave], savedLengths[selectedSave], MAXNOTES);
+            play();
+
+            lcdTime = 25;
+            lcdSetting = '4';
+            sprintf(lcdMessage, "Playing Song...");
+            sendLCDMessage(lcdMessage);
+            viewSaves = false;
+        } else if (stopSwitchPressed()) {
+            viewSaves = false;
+        }
+
+        //determine to move to next song
+        if(selectSwitchPressed()) {
+            while(selectSwitchPressed()) {} //wait for release
+            selectedSave++;
+            if(selectedSave>9) selectedSave = 0;//bound the value of the saved song
+            sprintf(lcdMessage, "Song %d /Play Stop=Exit", selectedSave);
+            sendLCDMessage(lcdMessage);
+        }
+    }
+
+    return;
 }
 
 void TA2_0_IRQHandler(void)
@@ -351,14 +444,10 @@ void TA2_0_IRQHandler(void)
 
             //if the section button was pressed, clear song
             if(selectButton) {
-                int i=0;
-                for(i=0; i<MAXNOTES; i++) {
-                    mainNotePeriods[i] = 0;
-                    mainNoteLengths[i] = 0;
-                    playNote = 0;
-                }
+                clearCurrentSong();
             } else {
                 //otherwise ask to save the song or enter saves
+                saveMenu();
             }
         }
 
@@ -386,26 +475,26 @@ void TA2_0_IRQHandler(void)
         if (stringTwoPressed())
         {
             //wait fur button release
-            while (stringOnePressed()) {
+            while (stringTwoPressed()) {
                 holdTimer++;
                 if (holdTimer % 4 == 0)
                     holdLength++;
             }
             mainNoteLengths[playNote] = holdLength;
-            mainNotePeriods[playNote] = string1Note;
+            mainNotePeriods[playNote] = string2Note;
             playNote++;
         }
         if (stringThreePressed())
         {
             //wait fur button release
-            while (stringOnePressed())
+            while (stringThreePressed())
             {
                 holdTimer++;
                 if (holdTimer % 4 == 0)
                     holdLength++;
             }
             mainNoteLengths[playNote] = holdLength;
-            mainNotePeriods[playNote] = string1Note;
+            mainNotePeriods[playNote] = string3Note;
             playNote++;
         }
 
