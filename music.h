@@ -64,12 +64,12 @@
 
 // PLAYABLE NOTES
 // Note A4 - 440 Hz, B4 - 493.88 Hz, C5 - 523.26 Hz
-#define NOTEF3s TimerA0Clock/FrequencyC3
-#define NOTEF3s TimerA0Clock/FrequencyC3s
-#define NOTEF3s TimerA0Clock/FrequencyD3
-#define NOTEF3s TimerA0Clock/FrequencyD3s
-#define NOTEF3s TimerA0Clock/FrequencyE3
-#define NOTEF3s TimerA0Clock/FrequencyF3
+#define NOTEC3 TimerA0Clock/FrequencyC3
+#define NOTEC3s TimerA0Clock/FrequencyC3s
+#define NOTED3 TimerA0Clock/FrequencyD3
+#define NOTED3s TimerA0Clock/FrequencyD3s
+#define NOTEE3 TimerA0Clock/FrequencyE3
+#define NOTEF3 TimerA0Clock/FrequencyF3
 #define NOTEF3s TimerA0Clock/FrequencyF3s
 #define NOTEG3  TimerA0Clock/FrequencyG3
 #define NOTEG3s TimerA0Clock/FrequencyG3s
