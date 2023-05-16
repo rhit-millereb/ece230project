@@ -15,6 +15,7 @@
 #include <msp.h>
 
 volatile uint16_t noteCount;
+#define MAXNOTES 10
 
 #define FULL_NOTE       32768 // Using LFXT at 32kHz: (32kHz/(1))*1 sec
 #define HALF_NOTE       FULL_NOTE/2

@@ -139,12 +139,12 @@ const uint16_t Song_HelloWorld[] = {
                               NOTEA3, NOTEC4, NOTEE4, NOTEF4, NOTEE4, NOTEE4, // this is real
                               NOTEA4, NOTED4, NOTEF4, NOTEF4, // Hello, world.
                               NULL};
-const uint16_t Song_HelloWorld[] = {
+const uint16_t NOTES_[] = {
                               QUARTER_NOTE, QUARTER_NOTE, WHOLE_NOTE, QUARTER_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, EIGHTH_NOTE, EIGHTH_NOTE, QUARTER_NOTE, WHOLE_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                              QUARTER_NOTE, QUARTER_NOTE, EIGHTH_NOTE, EIGHTH_NOTE, QUARTER_NOTE, wHOLE_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, EIGHTH_NOTE, EIGHTH_NOTE, QUARTER_NOTE, WHOLE_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, WHOLE_NOTE, HALF_NOTE,
                               NULL};
 

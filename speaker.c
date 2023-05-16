@@ -80,7 +80,7 @@ void configureSpeaker(void)
 void setMusic(uint16_t periods[], uint16_t lengths[], uint16_t count) {
     totalNotes = count;
     int i = 0;
-    for (i = 0; i < count; i++)
+    for (i = 0; i < MAXNOTES; i++)
     {
         notePeriods[i] = periods[i];
         noteLengths[i] = lengths[i];
