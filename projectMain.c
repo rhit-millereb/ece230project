@@ -17,7 +17,7 @@
 #include "potToDigConvert.h"
 #include "music.h"
 
-#define MAXNOTES 10
+
 
 uint16_t mainNoteLengths[MAXNOTES];
 uint16_t mainNotePeriods[MAXNOTES];
@@ -213,6 +213,7 @@ uint16_t setStringThreeNote(uint16_t adcValue) {
     }
 }
 
+
 uint16_t determineNoteLength(void) {
 
 }
@@ -294,7 +295,7 @@ void main(void)
 
 	configureSpeaker();
 	playNote = 0;
-	setTestNotes();
+	//setTestNotes();
 	note1 = 'A';
 	note2 = 'B';
 	note3 = 'C';
@@ -352,8 +353,9 @@ void TA2_0_IRQHandler(void)
             if(selectButton) {
                 int i=0;
                 for(i=0; i<MAXNOTES; i++) {
-                    notePeriods[i] = 0;
-                    noteLengths[i] = 0;
+                    mainNotePeriods[i] = 0;
+                    mainNoteLengths[i] = 0;
+                    playNote = 0;
                 }
             } else {
                 //otherwise ask to save the song or enter saves
@@ -367,20 +369,43 @@ void TA2_0_IRQHandler(void)
         string2Note = setStringTwoNote(string2);
         string3Note = setStringThreeNote(string3);
 
+        uint16_t holdLength = 0;
+        uint16_t holdTimer = 0;
         //determine if the string buttons are pressed
         if (stringOnePressed())
         {
+            //wait fur button release
+            while(stringOnePressed()) {
+                holdTimer++;
+                if(holdTimer%4==0) holdLength++;
+            }
+            mainNoteLengths[playNote] = holdLength;
             mainNotePeriods[playNote] = string1Note;
             playNote++;
         }
         if (stringTwoPressed())
         {
-            mainNotePeriods[playNote] = string2Note;
+            //wait fur button release
+            while (stringOnePressed()) {
+                holdTimer++;
+                if (holdTimer % 4 == 0)
+                    holdLength++;
+            }
+            mainNoteLengths[playNote] = holdLength;
+            mainNotePeriods[playNote] = string1Note;
             playNote++;
         }
         if (stringThreePressed())
         {
-            mainNotePeriods[playNote] = string3Note;
+            //wait fur button release
+            while (stringOnePressed())
+            {
+                holdTimer++;
+                if (holdTimer % 4 == 0)
+                    holdLength++;
+            }
+            mainNoteLengths[playNote] = holdLength;
+            mainNotePeriods[playNote] = string1Note;
             playNote++;
         }
 
