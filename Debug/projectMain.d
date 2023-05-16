@@ -32,6 +32,7 @@ projectMain.obj: ../lcd.h
 projectMain.obj: ../speaker.h
 projectMain.obj: ../servoDriver.h
 projectMain.obj: ../potToDigConvert.h
+projectMain.obj: ../music.h
 
 ../projectMain.c:
 
@@ -96,4 +97,6 @@ C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h:
 ../servoDriver.h:
 
 ../potToDigConvert.h:
+
+../music.h:
 
