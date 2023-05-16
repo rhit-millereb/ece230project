@@ -24,13 +24,19 @@
 #define RestNote 1
 
 // NOTE FREQUENCIES
+#define FrequencyC3     130.81
+#define FrequencyC3s    138.59
+#define FrequencyD3     146.83
+#define FrequencyD3s    155.56
+#define FrequencyE3     164.81
+#define FrequencyF3     174.61
 #define FrequencyF3s    185.00  // Lowest possible note given timer configurations!
 #define FrequencyG3     196.00
 #define FrequencyG3s    207.65
 #define FrequencyA3     220.00
 #define FrequencyA3s    233.08
 #define FrequencyB3     246.94
-#define FrequencyC4     261.63
+#define FrequencyC4     261.63 // Middle C, C4
 #define FrequencyC4s    277.18
 #define FrequencyD4     293.66
 #define FrequencyD4s    311.13
@@ -39,10 +45,10 @@
 #define FrequencyF4s    369.99
 #define FrequencyG4     392.00
 #define FrequencyG4s    415.30
-#define FrequencyA4     440.00  //Hz
+#define FrequencyA4     440.00  //Tuning Standard, A4
 #define FrequencyA4s    466.16
-#define FrequencyB4     493.88  //Hz
-#define FrequencyC5     523.25  //Hz
+#define FrequencyB4     493.88
+#define FrequencyC5     523.25
 #define FrequencyC5s    554.37
 #define FrequencyD5     587.33
 #define FrequencyD5s    622.25
@@ -58,6 +64,12 @@
 
 // PLAYABLE NOTES
 // Note A4 - 440 Hz, B4 - 493.88 Hz, C5 - 523.26 Hz
+#define NOTEF3s TimerA0Clock/FrequencyC3
+#define NOTEF3s TimerA0Clock/FrequencyC3s
+#define NOTEF3s TimerA0Clock/FrequencyD3
+#define NOTEF3s TimerA0Clock/FrequencyD3s
+#define NOTEF3s TimerA0Clock/FrequencyE3
+#define NOTEF3s TimerA0Clock/FrequencyF3
 #define NOTEF3s TimerA0Clock/FrequencyF3s
 #define NOTEG3  TimerA0Clock/FrequencyG3
 #define NOTEG3s TimerA0Clock/FrequencyG3s
@@ -100,23 +112,40 @@
 #define DELAY100MS      ACLK/5 //100ms timer delay
 
 // SAVED SONGS
-const uint16_t Song_TwinkleTwinkleLittleStar[] = {NOTEG3, NOTEG3, NOTED4, NOTED4, NOTEE4, NOTEE4, NOTED4, RestNote,
-                               NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, NOTEA3, NOTEG3, RestNote,
-                               NOTED4, NOTED4, NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, RestNote,
-                               NOTED4, NOTED4, NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, RestNote,
-                               NOTEG3, NOTEG3, NOTED4, NOTED4, NOTEE4, NOTEE4, NOTED4, RestNote,
-                               NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, NOTEA3, NOTEG3, RestNote,
-                               RestNote, RestNote, RestNote, RestNote,
-                               NULL};
-const uint16_t Notes_TwinkleTwinkleLittleStar[] = {QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                               NULL};
+const uint16_t Song_TwinkleTwinkleLittleStar[] = {
+                              NOTEG3, NOTEG3, NOTED4, NOTED4, NOTEE4, NOTEE4, NOTED4, RestNote,
+                              NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, NOTEA3, NOTEG3, RestNote,
+                              NOTED4, NOTED4, NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, RestNote,
+                              NOTED4, NOTED4, NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, RestNote,
+                              NOTEG3, NOTEG3, NOTED4, NOTED4, NOTEE4, NOTEE4, NOTED4, RestNote,
+                              NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, NOTEA3, NOTEG3, RestNote,
+                              RestNote, RestNote, RestNote, RestNote,
+                              NULL};
+const uint16_t Notes_TwinkleTwinkleLittleStar[] = {
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              NULL};
 
-
+const uint16_t Song_HelloWorld[] = {
+                              NOTEF4, NOTEC4, NOTEG4, NOTEG4, // Hello, world
+                              NOTEA4, NOTEC5, NOTEA4, NOTEF4, // Programmed to work
+                              NOTED4, NOTEC4, NOTED4, NOTEA4, NOTEG4, NOTEA4, NOTEA4, // and not to feel
+                              NOTEA4, NOTEG4, NOTEF4, NOTEE4, NOTED4, // Not even sure that
+                              NOTEA3, NOTEC4, NOTEE4, NOTEF4, NOTEE4, NOTEE4, // this is real
+                              NOTEA4, NOTED4, NOTEF4, NOTEF4, // Hello, world.
+                              NULL};
+const uint16_t Song_HelloWorld[] = {
+                              QUARTER_NOTE, QUARTER_NOTE, WHOLE_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, EIGHTH_NOTE, EIGHTH_NOTE, QUARTER_NOTE, WHOLE_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, EIGHTH_NOTE, EIGHTH_NOTE, QUARTER_NOTE, wHOLE_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, WHOLE_NOTE, HALF_NOTE,
+                              NULL};
 
 #endif /* MUSIC_H_ */
