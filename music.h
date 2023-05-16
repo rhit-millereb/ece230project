@@ -112,6 +112,7 @@
 #define DELAY100MS      ACLK/5 //100ms timer delay
 
 // SAVED SONGS
+// "Twinkle Tinkle Little Star (The Star)" by Jane Taylor
 const uint16_t Song_TwinkleTwinkleLittleStar[] = {
                               NOTEG3, NOTEG3, NOTED4, NOTED4, NOTEE4, NOTEE4, NOTED4, RestNote,
                               NOTEC4, NOTEC4, NOTEB3, NOTEB3, NOTEA3, NOTEA3, NOTEG3, RestNote,
@@ -130,7 +131,7 @@ const uint16_t Notes_TwinkleTwinkleLittleStar[] = {
                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
                               NULL};
-
+// "Hello, World" by Louie Zong
 const uint16_t Song_HelloWorld[] = {
                               NOTEF4, NOTEC4, NOTEG4, NOTEG4, // Hello, world
                               NOTEA4, NOTEC5, NOTEA4, NOTEF4, // Programmed to work
@@ -139,12 +140,12 @@ const uint16_t Song_HelloWorld[] = {
                               NOTEA3, NOTEC4, NOTEE4, NOTEF4, NOTEE4, NOTEE4, // this is real
                               NOTEA4, NOTED4, NOTEF4, NOTEF4, // Hello, world.
                               NULL};
-const uint16_t Song_HelloWorld[] = {
+const uint16_t Notes_HelloWorld[] = {
                               QUARTER_NOTE, QUARTER_NOTE, WHOLE_NOTE, QUARTER_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, EIGHTH_NOTE, EIGHTH_NOTE, QUARTER_NOTE, WHOLE_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE, QUARTER_NOTE,
-                              QUARTER_NOTE, QUARTER_NOTE, EIGHTH_NOTE, EIGHTH_NOTE, QUARTER_NOTE, wHOLE_NOTE,
+                              QUARTER_NOTE, QUARTER_NOTE, EIGHTH_NOTE, EIGHTH_NOTE, QUARTER_NOTE, WHOLE_NOTE,
                               QUARTER_NOTE, QUARTER_NOTE, WHOLE_NOTE, HALF_NOTE,
                               NULL};
 
