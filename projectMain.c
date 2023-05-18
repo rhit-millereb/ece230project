@@ -385,6 +385,8 @@ void saveMenu(void) {
     while(viewSaves) {
         //determine button presses
         if(playSwitchPressed()) {
+            while(playSwitchPressed()) {} //wait for release
+
             //send the speaker the current song
             setMusic(savedPeriods[selectedSave], savedLengths[selectedSave], MAXNOTES);
             play();
@@ -426,6 +428,8 @@ void TA2_0_IRQHandler(void)
 
         //determine if any control buttons are pressed
         if(playSwitchPressed()) {
+            while(playSwitchPressed()) {} //wait for release
+
             setMusic(mainNotePeriods, mainNoteLengths, playNote);
             play();
         }

@@ -30,7 +30,7 @@
 *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
 *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
 * 
-*  MSP432P4011 Interrupt Vector Table
+*  MSP432P4111 Interrupt Vector Table
 * 
 *****************************************************************************/
 
@@ -76,10 +76,14 @@ extern void TA1_0_IRQHandler    (void) __attribute__((weak,alias("Default_Handle
 extern void TA1_N_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
 extern void TA2_0_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
 extern void TA2_N_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
+extern void TA3_0_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
+extern void TA3_N_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
 extern void EUSCIA0_IRQHandler  (void) __attribute__((weak,alias("Default_Handler")));
 extern void EUSCIA1_IRQHandler  (void) __attribute__((weak,alias("Default_Handler")));
 extern void EUSCIA2_IRQHandler  (void) __attribute__((weak,alias("Default_Handler")));
+extern void EUSCIA3_IRQHandler  (void) __attribute__((weak,alias("Default_Handler")));
 extern void EUSCIB0_IRQHandler  (void) __attribute__((weak,alias("Default_Handler")));
+extern void EUSCIB1_IRQHandler  (void) __attribute__((weak,alias("Default_Handler")));
 extern void EUSCIB2_IRQHandler  (void) __attribute__((weak,alias("Default_Handler")));
 extern void EUSCIB3_IRQHandler  (void) __attribute__((weak,alias("Default_Handler")));
 extern void ADC14_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
@@ -99,6 +103,7 @@ extern void PORT3_IRQHandler    (void) __attribute__((weak,alias("Default_Handle
 extern void PORT4_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
 extern void PORT5_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
 extern void PORT6_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
+extern void LCD_F_IRQHandler    (void) __attribute__((weak,alias("Default_Handler")));
 
 /* Interrupt vector table.  Note that the proper constructs must be placed on this to */
 /* ensure that it ends up at physical address 0x0000.0000 or at the start of          */
@@ -138,14 +143,14 @@ void (* const interruptVectors[])(void) =
     TA1_N_IRQHandler,                      /* TA1_N Interrupt           */
     TA2_0_IRQHandler,                      /* TA2_0 Interrupt           */
     TA2_N_IRQHandler,                      /* TA2_N Interrupt           */
-    0,                                     /* Reserved                  */
-    0,                                     /* Reserved                  */
+    TA3_0_IRQHandler,                      /* TA3_0 Interrupt           */
+    TA3_N_IRQHandler,                      /* TA3_N Interrupt           */
     EUSCIA0_IRQHandler,                    /* EUSCIA0 Interrupt         */
     EUSCIA1_IRQHandler,                    /* EUSCIA1 Interrupt         */
     EUSCIA2_IRQHandler,                    /* EUSCIA2 Interrupt         */
-    0,                                     /* Reserved                  */
+    EUSCIA3_IRQHandler,                    /* EUSCIA3 Interrupt         */
     EUSCIB0_IRQHandler,                    /* EUSCIB0 Interrupt         */
-    0,                                     /* Reserved                  */
+    EUSCIB1_IRQHandler,                    /* EUSCIB1 Interrupt         */
     EUSCIB2_IRQHandler,                    /* EUSCIB2 Interrupt         */
     EUSCIB3_IRQHandler,                    /* EUSCIB3 Interrupt         */
     ADC14_IRQHandler,                      /* ADC14 Interrupt           */
@@ -164,7 +169,8 @@ void (* const interruptVectors[])(void) =
     PORT3_IRQHandler,                      /* Port3 Interrupt           */
     PORT4_IRQHandler,                      /* Port4 Interrupt           */
     PORT5_IRQHandler,                      /* Port5 Interrupt           */
-    PORT6_IRQHandler                       /* Port6 Interrupt           */
+    PORT6_IRQHandler,                      /* Port6 Interrupt           */
+    LCD_F_IRQHandler                       /* LCD_F Interrupt           */
 };
 
 /* Forward declaration of the default fault handlers. */

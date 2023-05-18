@@ -1,7 +1,7 @@
 /******************************************************************************
-* @file     system_msp432p4011.c
+* @file     system_msp432p4111.c
 * @brief    CMSIS Cortex-M4F Device Peripheral Access Layer Source File for
-*           MSP432P4011
+*           MSP432P4111
 * @version  3.240
 * @date     12/16/19
 *
@@ -387,7 +387,7 @@ void SystemInit(void)
     PCM->CTL0 = PCM_CTL0_KEY_VAL | PCM_CTL0_AMR_5;
     while((PCM->CTL1 & PCM_CTL1_PMR_BUSY));
     #endif
-
+	
     // 3 flash wait states (BANK0 VCORE1 max is 16 MHz, BANK1 VCORE1 max is 32 MHz)
     FLCTL_A->BANK0_RDCTL = (FLCTL_A->BANK0_RDCTL & ~(FLCTL_A_BANK0_RDCTL_WAIT_MASK)) |
             FLCTL_A_BANK0_RDCTL_WAIT_3;

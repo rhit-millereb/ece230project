@@ -6,7 +6,7 @@ SHELL = cmd.exe
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CMD_SRCS += \
-../msp432p4011.cmd 
+../msp432p4111.cmd 
 
 C_SRCS += \
 ../csHFXT.c \
@@ -16,9 +16,9 @@ C_SRCS += \
 ../projectMain.c \
 ../servoDriver.c \
 ../speaker.c \
-../startup_msp432p4011_ccs.c \
+../startup_msp432p4111_ccs.c \
 ../sysTickDelays.c \
-../system_msp432p4011.c 
+../system_msp432p4111.c 
 
 C_DEPS += \
 ./csHFXT.d \
@@ -28,9 +28,9 @@ C_DEPS += \
 ./projectMain.d \
 ./servoDriver.d \
 ./speaker.d \
-./startup_msp432p4011_ccs.d \
+./startup_msp432p4111_ccs.d \
 ./sysTickDelays.d \
-./system_msp432p4011.d 
+./system_msp432p4111.d 
 
 OBJS += \
 ./csHFXT.obj \
@@ -40,9 +40,9 @@ OBJS += \
 ./projectMain.obj \
 ./servoDriver.obj \
 ./speaker.obj \
-./startup_msp432p4011_ccs.obj \
+./startup_msp432p4111_ccs.obj \
 ./sysTickDelays.obj \
-./system_msp432p4011.obj 
+./system_msp432p4111.obj 
 
 OBJS__QUOTED += \
 "csHFXT.obj" \
@@ -52,9 +52,9 @@ OBJS__QUOTED += \
 "projectMain.obj" \
 "servoDriver.obj" \
 "speaker.obj" \
-"startup_msp432p4011_ccs.obj" \
+"startup_msp432p4111_ccs.obj" \
 "sysTickDelays.obj" \
-"system_msp432p4011.obj" 
+"system_msp432p4111.obj" 
 
 C_DEPS__QUOTED += \
 "csHFXT.d" \
@@ -64,9 +64,9 @@ C_DEPS__QUOTED += \
 "projectMain.d" \
 "servoDriver.d" \
 "speaker.d" \
-"startup_msp432p4011_ccs.d" \
+"startup_msp432p4111_ccs.d" \
 "sysTickDelays.d" \
-"system_msp432p4011.d" 
+"system_msp432p4111.d" 
 
 C_SRCS__QUOTED += \
 "../csHFXT.c" \
@@ -76,8 +76,8 @@ C_SRCS__QUOTED += \
 "../projectMain.c" \
 "../servoDriver.c" \
 "../speaker.c" \
-"../startup_msp432p4011_ccs.c" \
+"../startup_msp432p4111_ccs.c" \
 "../sysTickDelays.c" \
-"../system_msp432p4011.c" 
+"../system_msp432p4111.c" 
 
 
