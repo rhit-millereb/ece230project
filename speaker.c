@@ -15,40 +15,27 @@
 uint16_t currentNote = 0;
 uint16_t totalNotes = 0;
 
-void play(void) {
-    //set timer to up mode
-//    TIMER_A0->CTL |= 0b010000;
-    TIMER32_1->CONTROL |= TIMER32_CONTROL_ENABLE;
-    TIMER_A1->CTL |= 0b100000;
-
-
-}
 
 void stop(void) {
     //set timer to stop mode
-//    TIMER_A0->CTL &= ~0b010000;
-    TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE;
+    TIMER_A0->CTL &= ~0b010000;
     TIMER_A1->CTL &= ~0b110000;
+
+    //clear registers
+    TIMER_A0->R &= 0x0000;
+    TIMER_A1->R &= 0x0000;
 
     currentNote = 0;
 }
 
 void configureSoundTimer(void)
 {
+
     // Set Period in CCR0 register
-//    TIMER_A0->CCR[0] = notePeriods[0] - 1;
-    TIMER32_1->CONTROL |= TIMER32_CONTROL_MODE; // Periodic Mode
-    TIMER32_1->LOAD = 4 * (notePeriods[0] / 2) - 1; // Load half the frequency for 50% duty cycle, will lose 1 count per cycle. x4 for prescale.
-    // Set high pulse-width in CCR1 register (determines duty cycle)
-    TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ONESHOT; // Wrapping Mode
-//    TIMER_A0->CCTL[1] |= 0x0060; //set the control for CCR1 (Compare, Set/Reset, No interrupt)
-    TIMER32_1->CONTROL |= TIMER32_CONTROL_SIZE         // 32-bit
-                        | TIMER32_CONTROL_PRESCALE_0;   // 0:0 prescale. Technically 4:1, handled by LOAD register.
-//    TIMER_A0->CTL |= 0x0294; //set the TimerA0 control (SMCLK source, Up Mode, 4:1 prescale)
-    TIMER32_1->CONTROL |= TIMER32_CONTROL_IE; // Interrupt Enabled, for toggling speaker.
-    //set timer to STOP mode
-//    TIMER_A0->CTL &= 0xFFCF;
-    TIMER32_1->CONTROL &= ~TIMER32_CONTROL_ENABLE;
+        TIMER_A0->CCR[0] = notePeriods[0] - 1;
+        TIMER_A0->CCTL[1] |= 0x0060; //set the control for CCR1 (Compare, Set/Reset, No interrupt)
+        TIMER_A0->CTL |= 0x0294; //set the TimerA0 control (SMCLK source, Up Mode, 4:1 prescale)
+        TIMER_A0->CTL &= 0xFFCF; // set to stop mode
 }
 
 void configureIntervalTimer(void)
@@ -80,9 +67,16 @@ void configureSpeaker(void)
     configureSoundTimer();
     configureIntervalTimer();
 
-
-
     __enable_irq();
+}
+
+void play(void) {
+    configureSoundTimer();
+    configureIntervalTimer();
+
+    //set timer to up mode
+    TIMER_A0->CTL |= 0b010000;
+    TIMER_A1->CTL |= 0b100000;
 }
 
 
@@ -94,9 +88,6 @@ void setMusic(uint16_t periods[], uint16_t lengths[], uint16_t count) {
         notePeriods[i] = periods[i];
         noteLengths[i] = lengths[i];
     }
-
-    configureSoundTimer();
-    configureIntervalTimer();
 }
 
 void T32_INT1_IRQHandler(void) {
@@ -122,7 +113,7 @@ void TA1_N_IRQHandler(void)
 
         currentNote++;
 
-        if(currentNote>totalNotes) {
+        if(currentNote>=totalNotes || notePeriods[currentNote] == 0) {
             stop();
         }
 
@@ -131,10 +122,10 @@ void TA1_N_IRQHandler(void)
 
         uint16_t nextNote = notePeriods[currentNote];
         //set the next note
-//        TIMER_A0->CCR[0] = nextNote - 1;
-        TIMER32_1->LOAD = 4 * (nextNote / 2) - 1;
+        TIMER_A0->CCR[0] = nextNote - 1;
+//        TIMER32_1->LOAD = 4 * (nextNote / 2) - 1;
         // Set high pulse-width in CCR1 register (determines duty cycle)
-//        TIMER_A0->CCR[1] = (nextNote / 2) - 1;
+        TIMER_A0->CCR[1] = (nextNote / 2) - 1;
 
     }
 }

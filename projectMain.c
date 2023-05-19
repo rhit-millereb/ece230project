@@ -26,6 +26,7 @@ uint16_t savedPeriods[MAXNOTES][10];
 uint16_t mainNoteLengths[MAXNOTES];
 uint16_t mainNotePeriods[MAXNOTES];
 uint16_t playNote;
+uint16_t globalNoteLength;
 
 uint16_t string1Note;
 char note1;
@@ -69,10 +70,10 @@ void configureSwitches(void) {
     P1->REN |= BIT5+BIT6+BIT7;
 
     //configure string switches, select button
-    P3->SEL0 &= BIT5+BIT6+BIT7+BIT0;
-    P3->SEL1 &= BIT5+BIT6+BIT7+BIT0;
-    P3->OUT |= BIT5+BIT6+BIT7+BIT0;
-    P3->REN |= BIT5+BIT6+BIT7+BIT0;
+    P3->SEL0 &= BIT5+BIT6+BIT7+BIT0+BIT3;
+    P3->SEL1 &= BIT5+BIT6+BIT7+BIT0+BIT3;
+    P3->OUT |= BIT5+BIT6+BIT7+BIT0+BIT3;
+    P3->REN |= BIT5+BIT6+BIT7+BIT0+BIT3;
 
 
 }
@@ -139,7 +140,7 @@ bool stringOnePressed(void) {
     }
 }
 bool stringTwoPressed(void) {
-    char switchStatus = (P3->IN >> 6) & 1;
+    char switchStatus = (P3->IN >> 3) & 1;
     if (switchStatus == 1) {
        //button is not pressed
        return false;
@@ -164,18 +165,23 @@ bool stringThreePressed(void) {
 uint16_t setStringOneNote(uint16_t adcValue) {
     if(adcValue < 1000) {
         note1 = 'G';
+        octave1 = '3';
         return NOTEG3; //first tone
     } else if (adcValue < 2000) {
         note1 = 'A';
+        octave1 = '3';
         return NOTEA3; //second tone
     } else if (adcValue < 3000) {
         note1 = 'B';
+        octave1 = '3';
         return NOTEB3; //third tone
     } else if (adcValue < 4000) {
         note1 = 'C';
+        octave1 = '4';
         return NOTEC4; //fourth tone
     } else {
         note1 = 'D';
+        octave1 = '4';
         return NOTED4; //fifth tone
     }
 }
@@ -183,37 +189,47 @@ uint16_t setStringOneNote(uint16_t adcValue) {
 uint16_t setStringTwoNote(uint16_t adcValue) {
     if(adcValue < 1000) {
         note2 = 'E';
+        octave2 = '4';
         return NOTEE4; //first tone
     } else if (adcValue < 2000) {
         note2 = 'F';
+        octave2 = '4';
         return NOTEF4; //second tone
     } else if (adcValue < 3000) {
         note2 = 'G';
+        octave2 = '4';
         return NOTEG4; //third tone
     } else if (adcValue < 4000) {
         note2 = 'A';
-        return NOTEA5; //fourth tone
+        octave2 = '4';
+        return NOTEA4; //fourth tone
     } else {
         note2 = 'B';
-        return NOTEB5; //fifth tone
+        octave2 = '4';
+        return NOTEB4; //fifth tone
     }
 }
 
 uint16_t setStringThreeNote(uint16_t adcValue) {
     if(adcValue < 1000) {
         note3 = 'C';
+        octave3 = '5';
         return NOTEC5; //first tone
     } else if (adcValue < 2000) {
         note3 = 'D';
+        octave3 = '5';
         return NOTED5; //second tone
     } else if (adcValue < 3000) {
         note3 = 'E';
+        octave3 = '5';
         return NOTEE5; //third tone
     } else if (adcValue < 4000) {
         note3 = 'F';
+        octave3 = '5';
         return NOTEF5; //fourth tone
     } else {
         note3 = 'G';
+        octave3 = '5';
         return NOTEG5; //fifth tone
     }
 }
@@ -267,7 +283,11 @@ void mainLCD() {
 
     //standard display showing note values
     if(lcdSetting == '1') {
-        sprintf(lcdMessage, "1  2  3/%c  %c  %c", note1, note2, note3);
+        sprintf(lcdMessage, "1   2   3   %d/%c%c  %c%c  %c%c  %d", playNote, note1, octave1, note2, octave2, note3, octave3, MAXNOTES);
+        sendLCDMessage(lcdMessage);
+    } else if (lcdSetting == '2') {
+        //button is being pressed, show length
+        sprintf(lcdMessage, "1   2   3   %d/%d  %c%c  %c%c  %d", playNote, globalNoteLength, note2, octave2, note3, octave3, MAXNOTES);
         sendLCDMessage(lcdMessage);
     }
 }
@@ -449,6 +469,10 @@ void TA2_0_IRQHandler(void)
             //if the section button was pressed, clear song
             if(selectButton) {
                 clearCurrentSong();
+                lcdTime = 25;
+                lcdSetting = '4';
+                sprintf(lcdMessage, "SONG CLEARED");
+                sendLCDMessage(lcdMessage);
             } else {
                 //otherwise ask to save the song or enter saves
                 saveMenu();
@@ -471,7 +495,12 @@ void TA2_0_IRQHandler(void)
             while(stringOnePressed()) {
                 holdTimer++;
                 if(holdTimer%4==0) holdLength++;
+                if(holdLength >= 0xFFFF) break;
+                //lcd setting 2
+
             }
+
+            lcdSetting = '1'; //return to normal mode
             mainNoteLengths[playNote] = holdLength;
             mainNotePeriods[playNote] = string1Note;
             playNote++;
@@ -481,8 +510,8 @@ void TA2_0_IRQHandler(void)
             //wait fur button release
             while (stringTwoPressed()) {
                 holdTimer++;
-                if (holdTimer % 4 == 0)
-                    holdLength++;
+                if (holdTimer % 4 == 0) holdLength++;
+                if(holdLength >= 0xFFFF) break;
             }
             mainNoteLengths[playNote] = holdLength;
             mainNotePeriods[playNote] = string2Note;
@@ -494,8 +523,8 @@ void TA2_0_IRQHandler(void)
             while (stringThreePressed())
             {
                 holdTimer++;
-                if (holdTimer % 4 == 0)
-                    holdLength++;
+                if (holdTimer % 4 == 0) holdLength++;
+                if(holdLength >= 0xFFFF) break;
             }
             mainNoteLengths[playNote] = holdLength;
             mainNotePeriods[playNote] = string3Note;

@@ -24,12 +24,6 @@
 #define RestNote 1
 
 // NOTE FREQUENCIES
-#define FrequencyC3     130.81
-#define FrequencyC3s    138.59
-#define FrequencyD3     146.83
-#define FrequencyD3s    155.56
-#define FrequencyE3     164.81
-#define FrequencyF3     174.61
 #define FrequencyF3s    185.00  // Lowest possible note given timer configurations!
 #define FrequencyG3     196.00
 #define FrequencyG3s    207.65

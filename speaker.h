@@ -15,16 +15,16 @@
 #include <msp.h>
 
 volatile uint16_t noteCount;
-#define MAXNOTES 10
+#define MAXNOTES 30
 
 #define FULL_NOTE       32768 // Using LFXT at 32kHz: (32kHz/(1))*1 sec
 #define HALF_NOTE       FULL_NOTE/2
 #define QUARTER_NOTE    FULL_NOTE/4
 #define INTERVAL_REST   FULL_NOTE/10 //interval rest is 100ms, or 10% of full note value
 
-volatile uint16_t notePeriods[10];
+volatile uint16_t notePeriods[MAXNOTES];
 
-volatile uint16_t noteLengths[10];
+volatile uint16_t noteLengths[MAXNOTES];
 
 
 extern void configureSpeaker(void);
