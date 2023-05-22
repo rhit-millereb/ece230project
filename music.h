@@ -58,12 +58,12 @@
 
 // PLAYABLE NOTES
 // Note A4 - 440 Hz, B4 - 493.88 Hz, C5 - 523.26 Hz
-#define NOTEC3 TimerA0Clock/FrequencyC3
+#define NOTEC3  TimerA0Clock/FrequencyC3
 #define NOTEC3s TimerA0Clock/FrequencyC3s
-#define NOTED3 TimerA0Clock/FrequencyD3
+#define NOTED3  TimerA0Clock/FrequencyD3
 #define NOTED3s TimerA0Clock/FrequencyD3s
-#define NOTEE3 TimerA0Clock/FrequencyE3
-#define NOTEF3 TimerA0Clock/FrequencyF3
+#define NOTEE3  TimerA0Clock/FrequencyE3
+#define NOTEF3  TimerA0Clock/FrequencyF3
 #define NOTEF3s TimerA0Clock/FrequencyF3s
 #define NOTEG3  TimerA0Clock/FrequencyG3
 #define NOTEG3s TimerA0Clock/FrequencyG3s
@@ -95,15 +95,6 @@
 #define NOTEA5s TimerA0Clock/FrequencyA5s
 #define NOTEB5  TimerA0Clock/FrequencyB5    // Speaker struggles going this low, so experiment to find limits later
 #define NOTEC6  TimerA0Clock/FrequencyC6
-
-
-// NOTE DURATIONS
-#define ACLK            32768   //Hz
-#define WHOLE_NOTE      ACLK/2    //1 second
-#define HALF_NOTE       ACLK/4  //0.5 second
-#define QUARTER_NOTE    ACLK/8  //0.25 second
-#define EIGHTH_NOTE     ACLK/16  //0.125 second
-#define DELAY100MS      ACLK/5 //100ms timer delay
 
 // SAVED SONGS
 // "Twinkle Tinkle Little Star (The Star)" by Jane Taylor

@@ -17,10 +17,11 @@
 volatile uint16_t noteCount;
 #define MAXNOTES 30
 
-#define FULL_NOTE       32768 // Using LFXT at 32kHz: (32kHz/(1))*1 sec
-#define HALF_NOTE       FULL_NOTE/2
-#define QUARTER_NOTE    FULL_NOTE/4
-#define INTERVAL_REST   FULL_NOTE/10 //interval rest is 100ms, or 10% of full note value
+#define WHOLE_NOTE      32768 // Using LFXT at 32kHz: (32kHz/(1))*1 sec
+#define HALF_NOTE       WHOLE_NOTE/2
+#define QUARTER_NOTE    WHOLE_NOTE/4
+#define EIGHTH_NOTE     WHOLE_NOTE/8  //0.125 second
+#define DELAY100MS      WHOLE_NOTE/10 //interval rest is 100ms, or 10% of full note value
 
 volatile uint16_t notePeriods[MAXNOTES];
 

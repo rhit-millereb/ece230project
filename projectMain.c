@@ -25,7 +25,6 @@
 
 #include "lcd.h"
 #include "speaker.h"
-#include "servoDriver.h"
 #include "potToDigConvert.h"
 #include "music.h"
 #include "sysTickDelays.h"
@@ -463,17 +462,25 @@ void saveMenu(void) {
 }
 
 //function to determine what length of the note
-void determineNoteLength(uint16_t time) {
-    if(time == 0xFFFF/4) {
+uint16_t determineNoteLength(uint16_t time, uint16_t current) {
+    if(time == EIGHTH_NOTE) {
+        sprintf(lcdMessage, "Eighth Note");
+        sendLCDMessage(lcdMessage);
+        return EIGHTH_NOTE;
+    } else if(time == QUARTER_NOTE) {
         sprintf(lcdMessage, "Quarter Note");
         sendLCDMessage(lcdMessage);
-    } else if (time == 0xFFFF/2) {
+        return QUARTER_NOTE;
+    } else if (time == HALF_NOTE) {
         sprintf(lcdMessage, "Half Note");
         sendLCDMessage(lcdMessage);
-    } else if (time == 0xFFFF) {
-        sprintf(lcdMessage, "Full Note");
+        return HALF_NOTE;
+    } else if (time == WHOLE_NOTE) {
+        sprintf(lcdMessage, "Whole Note");
         sendLCDMessage(lcdMessage);
+        return WHOLE_NOTE;
     }
+    return current;
 }
 
 //interrupt of the 10Hz timer
@@ -533,6 +540,7 @@ void TA2_0_IRQHandler(void)
 
         uint16_t holdLength = 0;
         uint16_t holdTimer = 0;
+        uint16_t durationToPlay = 0;
         //determine if the string buttons are pressed
         if (stringOnePressed())
         {
@@ -540,7 +548,7 @@ void TA2_0_IRQHandler(void)
             while(stringOnePressed()) {
                 holdTimer++;
                 if(holdTimer%4==0) holdLength++;
-                determineNoteLength(holdLength);
+                durationToPlay = determineNoteLength(holdLength, durationToPlay);
                 if(holdLength >= 0xFFFF) {
                     //note at full, wait for release
                     while(stringOnePressed()) {}
@@ -549,7 +557,7 @@ void TA2_0_IRQHandler(void)
             }
 
 
-            mainNoteLengths[playNote] = holdLength;
+            mainNoteLengths[playNote] = durationToPlay;
             mainNotePeriods[playNote] = string1Note;
             playNote++;
         }
@@ -559,14 +567,14 @@ void TA2_0_IRQHandler(void)
             while (stringTwoPressed()) {
                 holdTimer++;
                 if (holdTimer % 4 == 0) holdLength++;
-                determineNoteLength(holdLength);
+                durationToPlay = determineNoteLength(holdLength, durationToPlay);
                 if(holdLength >= 0xFFFF) {
                     //note at full, wait for release
                     while(stringTwoPressed()) {}
                     break;
                 }
             }
-            mainNoteLengths[playNote] = holdLength;
+            mainNoteLengths[playNote] = durationToPlay;
             mainNotePeriods[playNote] = string2Note;
             playNote++;
         }
@@ -577,14 +585,14 @@ void TA2_0_IRQHandler(void)
             {
                 holdTimer++;
                 if (holdTimer % 4 == 0) holdLength++;
-                determineNoteLength(holdLength);
+                durationToPlay = determineNoteLength(holdLength, durationToPlay);
                 if(holdLength >= 0xFFFF) {
                     //note at full, wait for release
                     while(stringThreePressed()) {}
                     break;
                 }
             }
-            mainNoteLengths[playNote] = holdLength;
+            mainNoteLengths[playNote] = durationToPlay;
             mainNotePeriods[playNote] = string3Note;
             playNote++;
         }
