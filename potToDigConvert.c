@@ -2,7 +2,7 @@
  * potToDigConvert.c
  *
  *  Created on: Apr 24, 2023
- *      Author: millereb
+ *      Author: millereb and Taylor DiSalvo
  */
 
 #include <stdint.h>

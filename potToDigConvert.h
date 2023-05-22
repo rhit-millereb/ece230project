@@ -2,7 +2,7 @@
  * potToDigConvert.h
  *
  *  Created on: Apr 24, 2023
- *      Author: millereb
+ *      Author: millereb and Taylor DiSalvo
  */
 
 #ifndef POTTODIGCONVERT_H_

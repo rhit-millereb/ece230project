@@ -2,7 +2,7 @@
  * speaker.h
  *
  *  Created on: May 12, 2023
- *      Author: millereb
+ *      Author: millereb and Talyor DiSalvo
  */
 
 #ifdef __cplusplus

@@ -2,7 +2,7 @@
  * speaker.c
  *
  *  Created on: May 12, 2023
- *      Author: millereb
+ *      Author: millereb and Taylor Disalvo
  */
 
 #include "msp.h"

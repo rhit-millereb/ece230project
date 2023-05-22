@@ -3,7 +3,7 @@
  *      Description: Helper file for delay functions using SysTick timer. Must be
  *                   initialized with system clock frequency using initDelayTimer.
  *
- *      Author: ece230
+ *      Author: Ethan Miller and Taylor DiSalvo
  */
 
 #ifndef SYSTICKDELAYS_H_

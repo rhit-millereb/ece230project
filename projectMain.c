@@ -1,4 +1,16 @@
-
+/**
+ * Main File for the ECE230 Final Project
+ *
+ * Program uses hardware specified in the final report
+ *
+ * This file contains:
+ *  1) Main program to initialize the hardware
+ *  2) Switch/Pot Port and Pin configurations
+ *  3) 10Hz timer that runs to determine button press and what to do
+ *
+ * Ethan Miller and Taylor DiSalvo
+ * 5/21/2023
+ */
 
 
 #include "msp.h"
@@ -46,6 +58,7 @@ uint16_t lcdTime;
 
 #define  Frequency10Hz 3200  // 50ms*32/ms = 1600
 
+//function used to send a message to the LCD to be displayed
 void sendLCDMessage(char *message) {
     clearDisplay();
     setLineNumber(0x00);
@@ -62,6 +75,7 @@ void sendLCDMessage(char *message) {
     }
 }
 
+//function to configure the IO switches for the instrument
 void configureSwitches(void) {
     //configure control switches
     P1->SEL0 &= BIT5+BIT6+BIT7;
@@ -78,6 +92,10 @@ void configureSwitches(void) {
 
 }
 
+/**
+ * The Following are all the functions used to detect a button press
+ * Four functions for control buttons, three for the string buttons
+ */
 bool playSwitchPressed(void) {
     char switchStatus = (P1->IN >> 5) & 1;
     if (switchStatus == 1) {
@@ -162,6 +180,12 @@ bool stringThreePressed(void) {
     }
 }
 
+
+/**
+ * The following are functions used to determine the period of the note to play
+ * given the ADC value that has been sent
+ * The are three functions: one for each string
+ */
 uint16_t setStringOneNote(uint16_t adcValue) {
     if(adcValue < 1000) {
         note1 = 'G';
@@ -235,10 +259,8 @@ uint16_t setStringThreeNote(uint16_t adcValue) {
 }
 
 
-uint16_t determineNoteLength(void) {
-    return 0;
-}
 
+//Configures a 10Hz timer to function as the primary action of the program
 void ConfigureTimerA0CCROInterrupt(void) {
 
     /* Configure Timer_A1 and CCRs */
@@ -256,6 +278,13 @@ void ConfigureTimerA0CCROInterrupt(void) {
 }
 
 
+//State machine function that determine what to display on the LCD
+/**
+ * 1 = Normal
+ * 2 = Show Note Length
+ * 3 = Show welcome message
+ * 4 = present a popup
+ */
 void mainLCD() {
     //determine if there is a popup
     if(lcdSetting == '4') {
@@ -286,9 +315,7 @@ void mainLCD() {
         sprintf(lcdMessage, "1   2   3   %d/%c%c  %c%c  %c%c  %d", playNote, note1, octave1, note2, octave2, note3, octave3, MAXNOTES);
         sendLCDMessage(lcdMessage);
     } else if (lcdSetting == '2') {
-        //button is being pressed, show length
-        sprintf(lcdMessage, "1   2   3   %d/%d  %c%c  %c%c  %d", playNote, globalNoteLength, note2, octave2, note3, octave3, MAXNOTES);
-        sendLCDMessage(lcdMessage);
+        //unused
     }
 }
 
@@ -307,8 +334,6 @@ void main(void)
     configLCD(48000000);
     initLCD();
 
-    //init the delay timer
-    initDelayTimer(48000000);
 
 	//configure timers
 	configHFXT();
@@ -338,6 +363,7 @@ void main(void)
 
 }
 
+//function to clear the current song
 void clearCurrentSong(void) {
     int i = 0;
     for (i = 0; i < MAXNOTES; i++)
@@ -349,6 +375,9 @@ void clearCurrentSong(void) {
 }
 
 
+//function that runs when the save menu is played
+//freezes the updating of the LCD and presents a series
+//of menues for the user to interact with
 void saveMenu(void) {
     //stroke already set for menu
     sprintf(lcdMessage, "Save Song? /Play=Y Stop=N");
@@ -374,13 +403,13 @@ void saveMenu(void) {
             savedPeriods[currentSave][i] = mainNotePeriods[i];
         }
 
-        //increase current save
-        currentSave++;
-
-        sprintf(lcdMessage, "Song Saved");
+        sprintf(lcdMessage, "Song Saved/Saved to Song%d", currentSave);
         lcdTime = 50;
         lcdSetting = '4';
         sendLCDMessage(lcdMessage);
+
+        //increase current save
+        currentSave++;
         return;
     }
 
@@ -433,6 +462,21 @@ void saveMenu(void) {
     return;
 }
 
+//function to determine what length of the note
+void determineNoteLength(uint16_t time) {
+    if(time == 0xFFFF/4) {
+        sprintf(lcdMessage, "Quarter Note");
+        sendLCDMessage(lcdMessage);
+    } else if (time == 0xFFFF/2) {
+        sprintf(lcdMessage, "Half Note");
+        sendLCDMessage(lcdMessage);
+    } else if (time == 0xFFFF) {
+        sprintf(lcdMessage, "Full Note");
+        sendLCDMessage(lcdMessage);
+    }
+}
+
+//interrupt of the 10Hz timer
 void TA2_0_IRQHandler(void)
 {
     if (TIMER_A2->CCTL[0] & TIMER_A_CCTLN_CCIFG)
@@ -482,6 +526,7 @@ void TA2_0_IRQHandler(void)
         //run main function to update LCD
         mainLCD();
 
+        //using the ADC values determine the notes on each string
         string1Note = setStringOneNote(string1);
         string2Note = setStringTwoNote(string2);
         string3Note = setStringThreeNote(string3);
@@ -495,12 +540,15 @@ void TA2_0_IRQHandler(void)
             while(stringOnePressed()) {
                 holdTimer++;
                 if(holdTimer%4==0) holdLength++;
-                if(holdLength >= 0xFFFF) break;
-                //lcd setting 2
-
+                determineNoteLength(holdLength);
+                if(holdLength >= 0xFFFF) {
+                    //note at full, wait for release
+                    while(stringOnePressed()) {}
+                    break;
+                }
             }
 
-            lcdSetting = '1'; //return to normal mode
+
             mainNoteLengths[playNote] = holdLength;
             mainNotePeriods[playNote] = string1Note;
             playNote++;
@@ -511,7 +559,12 @@ void TA2_0_IRQHandler(void)
             while (stringTwoPressed()) {
                 holdTimer++;
                 if (holdTimer % 4 == 0) holdLength++;
-                if(holdLength >= 0xFFFF) break;
+                determineNoteLength(holdLength);
+                if(holdLength >= 0xFFFF) {
+                    //note at full, wait for release
+                    while(stringTwoPressed()) {}
+                    break;
+                }
             }
             mainNoteLengths[playNote] = holdLength;
             mainNotePeriods[playNote] = string2Note;
@@ -524,15 +577,16 @@ void TA2_0_IRQHandler(void)
             {
                 holdTimer++;
                 if (holdTimer % 4 == 0) holdLength++;
-                if(holdLength >= 0xFFFF) break;
+                determineNoteLength(holdLength);
+                if(holdLength >= 0xFFFF) {
+                    //note at full, wait for release
+                    while(stringThreePressed()) {}
+                    break;
+                }
             }
             mainNoteLengths[playNote] = holdLength;
             mainNotePeriods[playNote] = string3Note;
             playNote++;
         }
-
-        printf("\n\r value1: %d", string1Note);
-        printf(" value2: %d", string2Note);
-        printf(" value3: %d", string3Note);
     }
 }

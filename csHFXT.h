@@ -7,8 +7,8 @@
  * Description: Basic driver for configuring HFXT clock source on MSP432P4111
  *               Launchpad. Assumes LED1 configured for output.
  *
- *  Created on:
- *      Author:
+ *  Created on: 5/21/2023
+ *      Author: Ethan Miller and Taylor DiSalvo
  */
 
 #ifndef CSHFXT_H_

@@ -2,7 +2,7 @@
  * csHFXT.c
  *
  *  Created on: Dec 28, 2021
- *      Author: song
+ *      Author: Ethan Miller and Taylor DiSalvo
  */
 
 #include "msp.h"

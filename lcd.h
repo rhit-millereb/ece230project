@@ -10,7 +10,7 @@
  *
  *          This module uses SysTick timer for delays.
  *
- *      Author: ece230
+ *      Author: Ethan Miller and Taylor DiSalvo
  */
 
 #ifndef LCD_H_
