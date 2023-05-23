@@ -3,7 +3,6 @@
 "./lcd.obj"
 "./potToDigConvert.obj"
 "./projectMain.obj"
-"./servoDriver.obj"
 "./speaker.obj"
 "./startup_msp432p4111_ccs.obj"
 "./sysTickDelays.obj"

@@ -18,7 +18,7 @@ uint16_t totalNotes = 0;
 
 void stop(void) {
     //set timer to stop mode
-    TIMER_A0->CTL &= ~0b010000;
+    TIMER_A0->CTL &= ~0b110000;
     TIMER_A1->CTL &= ~0b110000;
 
     //clear registers
@@ -123,7 +123,6 @@ void TA1_N_IRQHandler(void)
         uint16_t nextNote = notePeriods[currentNote];
         //set the next note
         TIMER_A0->CCR[0] = nextNote - 1;
-//        TIMER32_1->LOAD = 4 * (nextNote / 2) - 1;
         // Set high pulse-width in CCR1 register (determines duty cycle)
         TIMER_A0->CCR[1] = (nextNote / 2) - 1;
 

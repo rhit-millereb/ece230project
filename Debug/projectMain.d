@@ -30,7 +30,6 @@ projectMain.obj: ../csHFXT.h
 projectMain.obj: ../csLFXT.h
 projectMain.obj: ../lcd.h
 projectMain.obj: ../speaker.h
-projectMain.obj: ../servoDriver.h
 projectMain.obj: ../potToDigConvert.h
 projectMain.obj: ../music.h
 projectMain.obj: ../sysTickDelays.h
@@ -94,8 +93,6 @@ C:/ti/ccs1230/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdbool.h:
 ../lcd.h:
 
 ../speaker.h:
-
-../servoDriver.h:
 
 ../potToDigConvert.h:
 

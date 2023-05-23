@@ -15,7 +15,6 @@ ORDERED_OBJS += \
 "./lcd.obj" \
 "./potToDigConvert.obj" \
 "./projectMain.obj" \
-"./servoDriver.obj" \
 "./speaker.obj" \
 "./startup_msp432p4111_ccs.obj" \
 "./sysTickDelays.obj" \
@@ -150,8 +149,8 @@ ece230project.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "csHFXT.obj" "csLFXT.obj" "lcd.obj" "potToDigConvert.obj" "projectMain.obj" "servoDriver.obj" "speaker.obj" "startup_msp432p4111_ccs.obj" "sysTickDelays.obj" "system_msp432p4111.obj" 
-	-$(RM) "csHFXT.d" "csLFXT.d" "lcd.d" "potToDigConvert.d" "projectMain.d" "servoDriver.d" "speaker.d" "startup_msp432p4111_ccs.d" "sysTickDelays.d" "system_msp432p4111.d" 
+	-$(RM) "csHFXT.obj" "csLFXT.obj" "lcd.obj" "potToDigConvert.obj" "projectMain.obj" "speaker.obj" "startup_msp432p4111_ccs.obj" "sysTickDelays.obj" "system_msp432p4111.obj" 
+	-$(RM) "csHFXT.d" "csLFXT.d" "lcd.d" "potToDigConvert.d" "projectMain.d" "speaker.d" "startup_msp432p4111_ccs.d" "sysTickDelays.d" "system_msp432p4111.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

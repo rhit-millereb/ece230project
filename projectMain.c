@@ -29,10 +29,12 @@
 #include "music.h"
 #include "sysTickDelays.h"
 
+#define MAXSAVES 20
+
 uint16_t currentSave;
 uint16_t selectedSave;
-uint16_t savedLengths[MAXNOTES][10];
-uint16_t savedPeriods[MAXNOTES][10];
+uint16_t savedLengths[MAXNOTES][MAXSAVES];
+uint16_t savedPeriods[MAXNOTES][MAXSAVES];
 
 uint16_t mainNoteLengths[MAXNOTES];
 uint16_t mainNotePeriods[MAXNOTES];
@@ -395,6 +397,20 @@ void saveMenu(void) {
 
     //save the song to the song array
     if(saveSong) {
+        if(currentSave + 1 == MAXSAVES) {
+            sprintf(lcdMessage, "All Saves Used");
+            lcdTime = 50;
+            lcdSetting = '4';
+            sendLCDMessage(lcdMessage);
+            return;
+        } else if (playNote == 0) {
+            sprintf(lcdMessage, "No Music to Save");
+            lcdTime = 50;
+            lcdSetting = '4';
+            sendLCDMessage(lcdMessage);
+            return;
+        }
+
         //set the song lengths and notes to the current value
         int i=0;
         for(i=0; i<MAXNOTES; i++) {
@@ -452,7 +468,7 @@ void saveMenu(void) {
         if(selectSwitchPressed()) {
             while(selectSwitchPressed()) {} //wait for release
             selectedSave++;
-            if(selectedSave>9) selectedSave = 0;//bound the value of the saved song
+            if(selectedSave>MAXSAVES-1) selectedSave = 0;//bound the value of the saved song
             sprintf(lcdMessage, "Song %d /Play Stop=Exit", selectedSave);
             sendLCDMessage(lcdMessage);
         }
@@ -463,6 +479,9 @@ void saveMenu(void) {
 
 //function to determine what length of the note
 uint16_t determineNoteLength(uint16_t time, uint16_t current) {
+    if(time<EIGHTH_NOTE) {
+        return EIGHTH_NOTE;
+    }
     if(time == EIGHTH_NOTE) {
         sprintf(lcdMessage, "Eighth Note");
         sendLCDMessage(lcdMessage);
@@ -498,7 +517,7 @@ void TA2_0_IRQHandler(void)
         uint16_t string3 = ADC14->MEM[3];
 
         //determine if any control buttons are pressed
-        if(playSwitchPressed()) {
+        if(playSwitchPressed() && (playNote > 0)) {
             while(playSwitchPressed()) {} //wait for release
 
             setMusic(mainNotePeriods, mainNoteLengths, playNote);

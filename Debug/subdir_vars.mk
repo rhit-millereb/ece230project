@@ -14,7 +14,6 @@ C_SRCS += \
 ../lcd.c \
 ../potToDigConvert.c \
 ../projectMain.c \
-../servoDriver.c \
 ../speaker.c \
 ../startup_msp432p4111_ccs.c \
 ../sysTickDelays.c \
@@ -26,7 +25,6 @@ C_DEPS += \
 ./lcd.d \
 ./potToDigConvert.d \
 ./projectMain.d \
-./servoDriver.d \
 ./speaker.d \
 ./startup_msp432p4111_ccs.d \
 ./sysTickDelays.d \
@@ -38,7 +36,6 @@ OBJS += \
 ./lcd.obj \
 ./potToDigConvert.obj \
 ./projectMain.obj \
-./servoDriver.obj \
 ./speaker.obj \
 ./startup_msp432p4111_ccs.obj \
 ./sysTickDelays.obj \
@@ -50,7 +47,6 @@ OBJS__QUOTED += \
 "lcd.obj" \
 "potToDigConvert.obj" \
 "projectMain.obj" \
-"servoDriver.obj" \
 "speaker.obj" \
 "startup_msp432p4111_ccs.obj" \
 "sysTickDelays.obj" \
@@ -62,7 +58,6 @@ C_DEPS__QUOTED += \
 "lcd.d" \
 "potToDigConvert.d" \
 "projectMain.d" \
-"servoDriver.d" \
 "speaker.d" \
 "startup_msp432p4111_ccs.d" \
 "sysTickDelays.d" \
@@ -74,7 +69,6 @@ C_SRCS__QUOTED += \
 "../lcd.c" \
 "../potToDigConvert.c" \
 "../projectMain.c" \
-"../servoDriver.c" \
 "../speaker.c" \
 "../startup_msp432p4111_ccs.c" \
 "../sysTickDelays.c" \
